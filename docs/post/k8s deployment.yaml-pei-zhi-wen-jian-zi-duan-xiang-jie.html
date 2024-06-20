@@ -9,7 +9,8 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中  
+<meta name="description" content="``` yml
+apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中  
 kind: Deployment  # 指定创建资源的角色/类型   
 metadata:  # 资源的元数据/属性 
   name: demo  # 资源的名字，在同一个namespace中必须唯一
@@ -27,7 +28,8 @@ spec: # 资源规范字段
   minReadySeconds: 30 #定义新建的 Pod 经过多少秒后才被视为可用
   terminationGracePeriodSeconds: 30 #30秒内 (默认 30s) 还未完全停止，就发送 SIGKILL 信号强制杀死进程。">
 <meta property="og:title" content="k8s deployment.yaml配置文件字段详解">
-<meta property="og:description" content="apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中  
+<meta property="og:description" content="``` yml
+apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中  
 kind: Deployment  # 指定创建资源的角色/类型   
 metadata:  # 资源的元数据/属性 
   name: demo  # 资源的名字，在同一个namespace中必须唯一
@@ -48,7 +50,7 @@ spec: # 资源规范字段
 <meta property="og:url" content="https://Phoenix-Wong.github.io/post/k8s%20deployment.yaml-pei-zhi-wen-jian-zi-duan-xiang-jie.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>k8s deployment.yaml配置文件字段详解</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 </head>
 <style>
@@ -102,104 +104,104 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中<br>
-kind: Deployment  # 指定创建资源的角色/类型<br>
-metadata:  # 资源的元数据/属性<br>
-name: demo  # 资源的名字，在同一个namespace中必须唯一<br>
-namespace: default # 部署在哪个namespace中<br>
-labels:  # 设定资源的标签<br>
-app: nginx<br>
-version: v1<br>
-spec: # 资源规范字段<br>
-replicas: 1 # 声明副本数目<br>
-revisionHistoryLimit: 3 # 保留历史版本<br>
-selector: # 选择器<br>
-matchLabels: # 匹配标签<br>
-app: nginx<br>
-version: v1<br>
-minReadySeconds: 30 #定义新建的 Pod 经过多少秒后才被视为可用<br>
-terminationGracePeriodSeconds: 30 #30秒内 (默认 30s) 还未完全停止，就发送 SIGKILL 信号强制杀死进程。<br>
-progressDeadlineSeconds: 600 #升级过程中的最大时间(如果升级过程被暂停了，该时间也会同步暂停，时间不会一直增长)<br>
-strategy: # 策略<br>
-rollingUpdate: # 滚动更新<br>
-maxSurge: 30% # 最大额外可以存在的副本数，可以为百分比，也可以为整数<br>
-maxUnavailable: 30% # 示在更新过程中能够进入不可用状态的 Pod 的最大值，可以为百分比，也可以为整数<br>
-type: RollingUpdate # 滚动更新策略<br>
-template: # 模版<br>
-metadata: # 资源的元数据/属性<br>
-annotations: # 自定义注解列表<br>
-sidecar.istio.io/inject: "false" # 自定义注解名字<br>
-labels: # 设定资源的标签<br>
-app: nginx<br>
-version: v1<br>
-spec: # 资源规范字段<br>
-containers:<br>
-- name: nginx# 容器的名字<br>
-image: nginx:1.17.0 # 容器使用的镜像地址<br>
-imagePullPolicy: IfNotPresent<br>
-# 每次Pod启动拉取镜像策略，三个选择 Always、Never、IfNotPresent<br>
-# Always，每次都检查；<br>
-# Never，每次都不检查（不管本地是否有）；<br>
-# IfNotPresent，如果本地有就不检查，如果没有就拉取（手动测试时，已经 打好镜像存在docker容器中时，<br>
-# 使用存在不检查级别， 默认为每次都检查，然后会进行拉取新镜像，因镜像仓库不存在，导致部署失败）<br>
-volumeMounts:       #文件挂载目录，容器内配置<br>
-- mountPath: /data/     #容器内要挂载的目录<br>
-name: share       #定义的名字，需要与下面vloume对应<br>
-resources: # 资源管理<br>
-limits: # 最大使用<br>
-cpu: 300m # CPU，1核心 = 1000m<br>
-memory: 500Mi # 内存，1G = 1000Mi<br>
-requests:  # 容器运行时，最低资源需求，也就是说最少需要多少资源容器才能正常运行<br>
-cpu: 100m<br>
-memory: 100Mi<br>
-livenessProbe: # pod 内部健康检查的设置<br>
-httpGet: # 通过httpget检查健康，返回200-399之间，则认为容器正常<br>
-path: /healthCheck # URI地址<br>
-port: 8080 # 端口<br>
-scheme: HTTP # 协议<br>
-# host: 127.0.0.1 # 主机地址<br>
-initialDelaySeconds: 30 # 表明第一次检测在容器启动后多长时间后开始<br>
-timeoutSeconds: 5 # 检测的超时时间<br>
-periodSeconds: 30 # 检查间隔时间<br>
-successThreshold: 1 # 成功门槛<br>
-failureThreshold: 5 # 失败门槛，连接失败5次，pod杀掉，重启一个新的pod<br>
-readinessProbe: # Pod 准备服务健康检查设置<br>
-httpGet:<br>
-path: /healthCheck<br>
-port: 8080<br>
-scheme: HTTP<br>
-initialDelaySeconds: 30<br>
-timeoutSeconds: 5<br>
-periodSeconds: 10<br>
-successThreshold: 1<br>
-failureThreshold: 5<br>
-#也可以用这种方法<br>
-#exec: 执行命令的方法进行监测，如果其退出码不为0，则认为容器正常<br>
-#  command:<br>
-#    - cat<br>
-#    - /tmp/health<br>
-#也可以用这种方法<br>
-#tcpSocket: # 通过tcpSocket检查健康<br>
-#  port: number<br>
-ports:<br>
-- name: http # 名称<br>
-containerPort: 8080 # 容器开发对外的端口<br>
-protocol: TCP # 协议<br>
-imagePullSecrets: # 镜像仓库拉取密钥<br>
-- name: harbor-certification<br>
-volumes:      #挂载目录在本机的路径<br>
-- name: share #对应上面的名字<br>
-hostPath:<br>
-path: /data   #挂载本机的路径<br>
-affinity: # 亲和性调试<br>
-nodeAffinity: # 节点亲和力<br>
-requiredDuringSchedulingIgnoredDuringExecution: # pod 必须部署到满足条件的节点上<br>
-nodeSelectorTerms: # 节点满足任何一个条件就可以<br>
-- matchExpressions: # 有多个选项，则只有同时满足这些逻辑选项的节点才能运行 pod<br>
-- key: beta.kubernetes.io/arch<br>
-operator: In<br>
-values:<br>
-- amd64</p></div>
+<div class="markdown-body" id="postBody"><div class="highlight highlight-source-yaml"><pre class="notranslate"><span class="pl-ent">apiVersion</span>: <span class="pl-s">extensions/v1beta1  </span><span class="pl-c"><span class="pl-c">#</span> 指定api版本，此值必须在kubectl api-versions中  </span>
+<span class="pl-ent">kind</span>: <span class="pl-s">Deployment  </span><span class="pl-c"><span class="pl-c">#</span> 指定创建资源的角色/类型   </span>
+<span class="pl-ent">metadata</span>:  <span class="pl-c"><span class="pl-c">#</span> 资源的元数据/属性 </span>
+  <span class="pl-ent">name</span>: <span class="pl-s">demo  </span><span class="pl-c"><span class="pl-c">#</span> 资源的名字，在同一个namespace中必须唯一</span>
+  <span class="pl-ent">namespace</span>: <span class="pl-s">default </span><span class="pl-c"><span class="pl-c">#</span> 部署在哪个namespace中</span>
+  <span class="pl-ent">labels</span>:  <span class="pl-c"><span class="pl-c">#</span> 设定资源的标签</span>
+    <span class="pl-ent">app</span>: <span class="pl-s">nginx</span>
+    <span class="pl-ent">version</span>: <span class="pl-c1">v1</span>
+<span class="pl-ent">spec</span>: <span class="pl-c"><span class="pl-c">#</span> 资源规范字段</span>
+  <span class="pl-ent">replicas</span>: <span class="pl-c1">1</span> <span class="pl-c"><span class="pl-c">#</span> 声明副本数目</span>
+  <span class="pl-ent">revisionHistoryLimit</span>: <span class="pl-c1">3</span> <span class="pl-c"><span class="pl-c">#</span> 保留历史版本</span>
+  <span class="pl-ent">selector</span>: <span class="pl-c"><span class="pl-c">#</span> 选择器</span>
+    <span class="pl-ent">matchLabels</span>: <span class="pl-c"><span class="pl-c">#</span> 匹配标签</span>
+      <span class="pl-ent">app</span>: <span class="pl-s">nginx</span>
+      <span class="pl-ent">version</span>: <span class="pl-c1">v1</span>
+  <span class="pl-ent">minReadySeconds</span>: <span class="pl-c1">30</span> <span class="pl-c"><span class="pl-c">#</span>定义新建的 Pod 经过多少秒后才被视为可用</span>
+  <span class="pl-ent">terminationGracePeriodSeconds</span>: <span class="pl-c1">30</span> <span class="pl-c"><span class="pl-c">#</span>30秒内 (默认 30s) 还未完全停止，就发送 SIGKILL 信号强制杀死进程。</span>
+  <span class="pl-ent">progressDeadlineSeconds</span>: <span class="pl-c1">600</span> <span class="pl-c"><span class="pl-c">#</span>升级过程中的最大时间(如果升级过程被暂停了，该时间也会同步暂停，时间不会一直增长)</span>
+  <span class="pl-ent">strategy</span>: <span class="pl-c"><span class="pl-c">#</span> 策略</span>
+    <span class="pl-ent">rollingUpdate</span>: <span class="pl-c"><span class="pl-c">#</span> 滚动更新</span>
+      <span class="pl-ent">maxSurge</span>: <span class="pl-c1">30%</span> <span class="pl-c"><span class="pl-c">#</span> 最大额外可以存在的副本数，可以为百分比，也可以为整数</span>
+      <span class="pl-ent">maxUnavailable</span>: <span class="pl-c1">30%</span> <span class="pl-c"><span class="pl-c">#</span> 示在更新过程中能够进入不可用状态的 Pod 的最大值，可以为百分比，也可以为整数</span>
+    <span class="pl-ent">type</span>: <span class="pl-s">RollingUpdate </span><span class="pl-c"><span class="pl-c">#</span> 滚动更新策略</span>
+  <span class="pl-ent">template</span>: <span class="pl-c"><span class="pl-c">#</span> 模版</span>
+    <span class="pl-ent">metadata</span>: <span class="pl-c"><span class="pl-c">#</span> 资源的元数据/属性 </span>
+      <span class="pl-ent">annotations</span>: <span class="pl-c"><span class="pl-c">#</span> 自定义注解列表</span>
+        <span class="pl-ent">sidecar.istio.io/inject</span>: <span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span> <span class="pl-c"><span class="pl-c">#</span> 自定义注解名字</span>
+      <span class="pl-ent">labels</span>: <span class="pl-c"><span class="pl-c">#</span> 设定资源的标签</span>
+        <span class="pl-ent">app</span>: <span class="pl-s">nginx</span>
+        <span class="pl-ent">version</span>: <span class="pl-c1">v1</span>
+    <span class="pl-ent">spec</span>: <span class="pl-c"><span class="pl-c">#</span> 资源规范字段</span>
+      <span class="pl-ent">containers</span>:
+      - <span class="pl-ent">name</span>: <span class="pl-s">nginx# 容器的名字   </span>
+        <span class="pl-ent">image</span>: <span class="pl-s">nginx:1.17.0 </span><span class="pl-c"><span class="pl-c">#</span> 容器使用的镜像地址   </span>
+        <span class="pl-ent">imagePullPolicy</span>: <span class="pl-s">IfNotPresent </span>
+        <span class="pl-c"><span class="pl-c">#</span> 每次Pod启动拉取镜像策略，三个选择 Always、Never、IfNotPresent</span>
+        <span class="pl-c"><span class="pl-c">#</span> Always，每次都检查；</span>
+        <span class="pl-c"><span class="pl-c">#</span> Never，每次都不检查（不管本地是否有）；</span>
+        <span class="pl-c"><span class="pl-c">#</span> IfNotPresent，如果本地有就不检查，如果没有就拉取（手动测试时，已经 打好镜像存在docker容器中时，</span>
+<span class="pl-ii">	</span>        <span class="pl-c"><span class="pl-c">#</span> 使用存在不检查级别， 默认为每次都检查，然后会进行拉取新镜像，因镜像仓库不存在，导致部署失败）</span>
+        <span class="pl-ent">volumeMounts</span>:       <span class="pl-c"><span class="pl-c">#</span>文件挂载目录，容器内配置</span>
+        - <span class="pl-ent">mountPath</span>: <span class="pl-s">/data/     </span><span class="pl-c"><span class="pl-c">#</span>容器内要挂载的目录</span>
+          <span class="pl-ent">name</span>: <span class="pl-s">share       </span><span class="pl-c"><span class="pl-c">#</span>定义的名字，需要与下面vloume对应</span>
+        <span class="pl-ent">resources</span>: <span class="pl-c"><span class="pl-c">#</span> 资源管理</span>
+          <span class="pl-ent">limits</span>: <span class="pl-c"><span class="pl-c">#</span> 最大使用</span>
+            <span class="pl-ent">cpu</span>: <span class="pl-c1">300m</span> <span class="pl-c"><span class="pl-c">#</span> CPU，1核心 = 1000m</span>
+            <span class="pl-ent">memory</span>: <span class="pl-s">500Mi </span><span class="pl-c"><span class="pl-c">#</span> 内存，1G = 1000Mi</span>
+          <span class="pl-ent">requests</span>:  <span class="pl-c"><span class="pl-c">#</span> 容器运行时，最低资源需求，也就是说最少需要多少资源容器才能正常运行</span>
+            <span class="pl-ent">cpu</span>: <span class="pl-c1">100m</span>
+            <span class="pl-ent">memory</span>: <span class="pl-s">100Mi</span>
+        <span class="pl-ent">livenessProbe</span>: <span class="pl-c"><span class="pl-c">#</span> pod 内部健康检查的设置</span>
+          <span class="pl-ent">httpGet</span>: <span class="pl-c"><span class="pl-c">#</span> 通过httpget检查健康，返回200-399之间，则认为容器正常</span>
+            <span class="pl-ent">path</span>: <span class="pl-s">/healthCheck </span><span class="pl-c"><span class="pl-c">#</span> URI地址</span>
+            <span class="pl-ent">port</span>: <span class="pl-c1">8080</span> <span class="pl-c"><span class="pl-c">#</span> 端口</span>
+            <span class="pl-ent">scheme</span>: <span class="pl-s">HTTP </span><span class="pl-c"><span class="pl-c">#</span> 协议</span>
+            <span class="pl-c"><span class="pl-c">#</span> host: 127.0.0.1 # 主机地址</span>
+          <span class="pl-ent">initialDelaySeconds</span>: <span class="pl-c1">30</span> <span class="pl-c"><span class="pl-c">#</span> 表明第一次检测在容器启动后多长时间后开始</span>
+          <span class="pl-ent">timeoutSeconds</span>: <span class="pl-c1">5</span> <span class="pl-c"><span class="pl-c">#</span> 检测的超时时间</span>
+          <span class="pl-ent">periodSeconds</span>: <span class="pl-c1">30</span> <span class="pl-c"><span class="pl-c">#</span> 检查间隔时间</span>
+          <span class="pl-ent">successThreshold</span>: <span class="pl-c1">1</span> <span class="pl-c"><span class="pl-c">#</span> 成功门槛</span>
+          <span class="pl-ent">failureThreshold</span>: <span class="pl-c1">5</span> <span class="pl-c"><span class="pl-c">#</span> 失败门槛，连接失败5次，pod杀掉，重启一个新的pod</span>
+        <span class="pl-ent">readinessProbe</span>: <span class="pl-c"><span class="pl-c">#</span> Pod 准备服务健康检查设置</span>
+          <span class="pl-ent">httpGet</span>:
+            <span class="pl-ent">path</span>: <span class="pl-s">/healthCheck</span>
+            <span class="pl-ent">port</span>: <span class="pl-c1">8080</span>
+            <span class="pl-ent">scheme</span>: <span class="pl-s">HTTP</span>
+          <span class="pl-ent">initialDelaySeconds</span>: <span class="pl-c1">30</span>
+          <span class="pl-ent">timeoutSeconds</span>: <span class="pl-c1">5</span>
+          <span class="pl-ent">periodSeconds</span>: <span class="pl-c1">10</span>
+          <span class="pl-ent">successThreshold</span>: <span class="pl-c1">1</span>
+          <span class="pl-ent">failureThreshold</span>: <span class="pl-c1">5</span>
+        <span class="pl-c"><span class="pl-c">#</span>也可以用这种方法   </span>
+        <span class="pl-c"><span class="pl-c">#</span>exec: 执行命令的方法进行监测，如果其退出码不为0，则认为容器正常   </span>
+        <span class="pl-c"><span class="pl-c">#</span>  command:   </span>
+        <span class="pl-c"><span class="pl-c">#</span>    - cat   </span>
+        <span class="pl-c"><span class="pl-c">#</span>    - /tmp/health   </span>
+        <span class="pl-c"><span class="pl-c">#</span>也可以用这种方法   </span>
+        <span class="pl-c"><span class="pl-c">#</span>tcpSocket: # 通过tcpSocket检查健康  </span>
+        <span class="pl-c"><span class="pl-c">#</span>  port: number </span>
+        <span class="pl-ent">ports</span>:
+          - <span class="pl-ent">name</span>: <span class="pl-s">http </span><span class="pl-c"><span class="pl-c">#</span> 名称</span>
+            <span class="pl-ent">containerPort</span>: <span class="pl-c1">8080</span> <span class="pl-c"><span class="pl-c">#</span> 容器开发对外的端口 </span>
+            <span class="pl-ent">protocol</span>: <span class="pl-s">TCP </span><span class="pl-c"><span class="pl-c">#</span> 协议</span>
+      <span class="pl-ent">imagePullSecrets</span>: <span class="pl-c"><span class="pl-c">#</span> 镜像仓库拉取密钥</span>
+        - <span class="pl-ent">name</span>: <span class="pl-s">harbor-certification</span>
+      <span class="pl-ent">volumes</span>:      <span class="pl-c"><span class="pl-c">#</span>挂载目录在本机的路径</span>
+      - <span class="pl-ent">name</span>: <span class="pl-s">share </span><span class="pl-c"><span class="pl-c">#</span>对应上面的名字</span>
+        <span class="pl-ent">hostPath</span>:
+          <span class="pl-ent">path</span>: <span class="pl-s">/data   </span><span class="pl-c"><span class="pl-c">#</span>挂载本机的路径</span>
+      <span class="pl-ent">affinity</span>: <span class="pl-c"><span class="pl-c">#</span> 亲和性调试</span>
+        <span class="pl-ent">nodeAffinity</span>: <span class="pl-c"><span class="pl-c">#</span> 节点亲和力</span>
+          <span class="pl-ent">requiredDuringSchedulingIgnoredDuringExecution</span>: <span class="pl-c"><span class="pl-c">#</span> pod 必须部署到满足条件的节点上</span>
+            <span class="pl-ent">nodeSelectorTerms</span>: <span class="pl-c"><span class="pl-c">#</span> 节点满足任何一个条件就可以</span>
+            - <span class="pl-ent">matchExpressions</span>: <span class="pl-c"><span class="pl-c">#</span> 有多个选项，则只有同时满足这些逻辑选项的节点才能运行 pod</span>
+              - <span class="pl-ent">key</span>: <span class="pl-s">beta.kubernetes.io/arch</span>
+                <span class="pl-ent">operator</span>: <span class="pl-s">In</span>
+                <span class="pl-ent">values</span>:
+                - <span class="pl-s">amd64</span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>

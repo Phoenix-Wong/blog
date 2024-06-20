@@ -1,3 +1,4 @@
+``` yml
 apiVersion: extensions/v1beta1  # 指定api版本，此值必须在kubectl api-versions中  
 kind: Deployment  # 指定创建资源的角色/类型   
 metadata:  # 资源的元数据/属性 
@@ -96,3 +97,4 @@ spec: # 资源规范字段
                 operator: In
                 values:
                 - amd64
+```
