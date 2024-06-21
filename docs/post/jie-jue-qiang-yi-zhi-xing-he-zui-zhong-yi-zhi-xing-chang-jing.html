@@ -15,7 +15,7 @@
 <meta property="og:description" content="强一致性
 比如订单创建和取消时对库存和优惠券系统的调用，如果不能保证强一致，可能导致库存超卖或优惠券重复使用。">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://Phoenix-Wong.github.io/post/jie-jue-qiang-yi-zhi-xing-he-zui-zhong-yi-zhi-xing-chang-jing.html">
+<meta property="og:url" content="https://Phoenix-Wong.github.io/blog/post/jie-jue-qiang-yi-zhi-xing-he-zui-zhong-yi-zhi-xing-chang-jing.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>解决强一致性和最终一致性场景</title>
 
@@ -50,13 +50,13 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="header">
 <h1 class="postTitle">解决强一致性和最终一致性场景</h1>
 <div class="title-right">
-    <a href="https://Phoenix-Wong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+    <a href="https://Phoenix-Wong.github.io/blog" id="buttonHome" class="btn btn-invisible circle" title="首页">
         <svg class="octicon" width="16" height="16">
             <path id="pathHome" fill-rule="evenodd"></path>
         </svg>
     </a>
     
-    <a href="https://github.com/Phoenix-Wong/Phoenix-Wong.github.io/issues/2" target="_blank" class="btn btn-invisible circle" title="Issue">
+    <a href="https://github.com/Phoenix-Wong/blog/issues/2" target="_blank" class="btn btn-invisible circle" title="Issue">
         <svg class="octicon" width="16" height="16">
             <path id="pathIssue" fill-rule="evenodd"></path>
         </svg>
@@ -82,7 +82,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>
 </div>
-    <div id="footer">Copyright © <span id="year"></span><a href="https://Phoenix-Wong.github.io"> FicOo </a>
+    <div id="footer">Copyright © <span id="year"></span><a href="https://Phoenix-Wong.github.io/blog"> FicOo </a>
 <p>
 <span id="runday"></span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a>
 </p>
@@ -146,7 +146,7 @@ function openComments(){
 
     script=document.createElement("script");
     script.setAttribute("src","https://utteranc.es/client.js");
-    script.setAttribute("repo","Phoenix-Wong/Phoenix-Wong.github.io");
+    script.setAttribute("repo","Phoenix-Wong/blog");
     script.setAttribute("issue-term","title");
     
     if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
