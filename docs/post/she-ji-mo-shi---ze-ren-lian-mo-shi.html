@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 责任链模式
+## 1. 什么是责任链
+责任链设计模式是一种行为型设计模式，其主要目的是解耦请求发送者和请求接收者，让多个对象都有机会处理请求，从而避免请求发送者和接收者之间的紧耦合。">
+<meta property="og:title" content="设计模式-责任链模式">
+<meta property="og:description" content="# 责任链模式
+## 1. 什么是责任链
+责任链设计模式是一种行为型设计模式，其主要目的是解耦请求发送者和请求接收者，让多个对象都有机会处理请求，从而避免请求发送者和接收者之间的紧耦合。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://Phoenix-Wong.github.io/blog/post/she-ji-mo-shi---ze-ren-lian-mo-shi.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>设计模式-责任链模式</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">设计模式-责任链模式</h1>
+<div class="title-right">
+    <a href="https://Phoenix-Wong.github.io/blog" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/Phoenix-Wong/blog/issues/5" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>责任链模式</h1>
+<h2>1. 什么是责任链</h2>
+<p>责任链设计模式是一种行为型设计模式，其主要目的是解耦请求发送者和请求接收者，让多个对象都有机会处理请求，从而避免请求发送者和接收者之间的紧耦合。</p>
+<p>责任链模式的核心是一个链式结构，链中每个节点代表一个处理者对象，请求先经过第一个节点处理，如果该节点能够处理请求，则直接返回处理结果；否则，请求继续往下一个节点传递，直到找到能够处理该请求的节点为止。整个过程类似于流水线上的多个工作站，每个工作站负责一项工作，如果自己处理不了，就将工作交给下一个工作站，直到整个工作完成。</p>
+<p>在责任链模式中，每个处理者对象都有一个指向下一个处理者对象的引用，这样就形成了一个处理者链。请求发送者只需要将请求发送给第一个节点即可，而不用关心请求会被哪个处理者对象处理。由于每个处理者对象都有机会处理请求，因此责任链模式可以实现请求的动态分配。</p>
+<h2>2. 优缺点</h2>
+<p>责任链模式的优点在于，它可以动态地添加、删除和调整处理者对象，从而灵活地构建处理链。同时，它也避免了请求发送者和接收者之间的紧耦合，增强了系统的灵活性和可扩展性。</p>
+<p>不过，责任链模式也有一定的缺点，例如如果处理链过长或者处理时间过长，可能会对系统性能产生一定的影响。</p>
+<h2>3. 应用场景</h2>
+<p>在实际应用中，责任链模式常用于请求的预处理、请求的过滤、请求的分发等场景。例如，可以使用责任链模式来实现权限校验、日志记录、异常处理、请求重试等功能。同时，也可以将责任链模式与其他设计模式结合起来，例如装饰器模式、工厂模式、观察者模式等，从而实现更复杂的功能。</p>
+<h2>下单场景实战</h2>
+<h3>1. 下单前置校验</h3>
+<p>在电商系统下单接口中，前置校验是非常重要的环节。下面是一个可能的校验步骤列表：</p>
+<p>检查商品信息是否存在，包括商品名称、价格、规格等信息。<br>
+检查购买数量是否合法，是否超出了最大购买数量或最小购买数量的限制。<br>
+检查商品库存是否充足，以确保库存足够满足购买者的需求。<br>
+检查购买者的优惠券、积分等是否可以使用，以确保购买者能够享受相应的优惠或积分奖励。<br>
+检查收货地址信息是否完整和准确，以确保商品能够顺利地送达给购买者。<br>
+检查下单时间是否合法，例如检查购买者是否在限定的时间范围内下单。<br>
+真实电商场景中，验证逻辑绝对不仅仅是这些，过之而无不及。</p>
+<p>对于完成这些前置校验逻辑，大部分程序员可能的代码思路如下：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-s1">createOrder</span>(<span class="pl-smi">CreateOrderReqDTO</span> <span class="pl-s1">xxx</span>) {
+    <span class="pl-c">// 检查商品信息是否存在，包括商品名称、价格、规格等信息</span>
+  	<span class="pl-c">// 检查购买数量是否合法，是否超出了最大购买数量或最小购买数量的限制</span>
+    <span class="pl-c">// 检查商品库存是否充足，以确保库存足够满足购买者的需求</span>
+    <span class="pl-c">// 检查购买者的优惠券、积分等是否可以使用，以确保购买者能够享受相应的优惠或积分奖励</span>
+    <span class="pl-c">// 检查收货地址信息是否完整和准确，以确保商品能够顺利地送达给购买者</span>
+    <span class="pl-c">// 检查下单时间是否合法，例如检查购买者是否在限定的时间范围内下单</span>
+    <span class="pl-c">// ......</span>
+}</pre></div>
+<p>解决前置校验需求需要实现一堆逻辑，常常需要写上几百上千行代码。</p>
+<p>为了避免这种代码臃肿的情况，我们可以运用责任链设计模式，对下单验证逻辑进行抽象。</p>
+<h3>2. 责任链重构</h3>
+<p>定义一个责任链处理器接口，所有子任务都实现该接口以处理具体的业务逻辑。</p>
+<p>同时，为了方便对责任链流程中的任务进行顺序处理，我们需要继承 Spring 框架中的排序接口 Ordered。这将有助于保证责任链中的任务顺序执行。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">Ordered</span> {
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 执行责任链逻辑</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 责任链执行入参</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>);
+}
+
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">Ordered</span> {
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 执行责任链逻辑</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 责任链执行入参</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>);
+}
+创建<span class="pl-s1">一</span>个责任链上下文容器，用于存储与责任链相应的子任务。
+
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateChainContext</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">implements</span> <span class="pl-smi">CommandLineRunner</span> {
+    
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">List</span>&lt;<span class="pl-smi">OrderCreateChainHandler</span>&gt; <span class="pl-s1">orderCreateChainHandlerContainer</span> = <span class="pl-k">new</span> <span class="pl-smi">ArrayList</span>();
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 责任链组件执行</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 请求参数</span>
+<span class="pl-c">     */</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 此处根据 Ordered 实际值进行排序处理</span>
+        <span class="pl-s1">orderCreateChainHandlerContainer</span>.<span class="pl-en">stream</span>()
+                .<span class="pl-en">sorted</span>(<span class="pl-smi">Comparator</span>.<span class="pl-en">comparing</span>(<span class="pl-smi">Ordered</span>::<span class="pl-s1">getOrder</span>)).<span class="pl-en">forEach</span>(<span class="pl-s1">each</span> -&gt; <span class="pl-s1">each</span>.<span class="pl-en">handler</span>(<span class="pl-s1">requestParam</span>));
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">run</span>(<span class="pl-smi">String</span>... <span class="pl-s1">args</span>) <span class="pl-k">throws</span> <span class="pl-smi">Exception</span> {
+      	<span class="pl-c">// 通过 Spring 上下文容器，获取所有 CreateOrderChainContext Bean</span>
+        <span class="pl-smi">Map</span>&lt;<span class="pl-smi">String</span>, <span class="pl-smi">OrderCreateChainHandler</span>&gt; <span class="pl-s1">chainFilterMap</span> = <span class="pl-smi">ApplicationContextHolder</span>.<span class="pl-en">getBeansOfType</span>(<span class="pl-smi">OrderCreateChainHandler</span>.<span class="pl-k">class</span>);
+      	<span class="pl-c">// 将对应 Bean 放入责任链上下文容器中</span>
+        <span class="pl-s1">chainFilterMap</span>.<span class="pl-en">forEach</span>((<span class="pl-s1">beanName</span>, <span class="pl-s1">bean</span>) -&gt; <span class="pl-s1">orderCreateChainHandlerContainer</span>.<span class="pl-en">add</span>(<span class="pl-s1">bean</span>););
+    }
+}
+
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateChainContext</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">implements</span> <span class="pl-smi">CommandLineRunner</span> {
+    
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">List</span>&lt;<span class="pl-smi">OrderCreateChainHandler</span>&gt; <span class="pl-s1">orderCreateChainHandlerContainer</span> = <span class="pl-k">new</span> <span class="pl-smi">ArrayList</span>();
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 责任链组件执行</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 请求参数</span>
+<span class="pl-c">     */</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 此处根据 Ordered 实际值进行排序处理</span>
+        <span class="pl-s1">orderCreateChainHandlerContainer</span>.<span class="pl-en">stream</span>()
+                .<span class="pl-en">sorted</span>(<span class="pl-smi">Comparator</span>.<span class="pl-en">comparing</span>(<span class="pl-smi">Ordered</span>::<span class="pl-s1">getOrder</span>)).<span class="pl-en">forEach</span>(<span class="pl-s1">each</span> -&gt; <span class="pl-s1">each</span>.<span class="pl-en">handler</span>(<span class="pl-s1">requestParam</span>));
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">run</span>(<span class="pl-smi">String</span>... <span class="pl-s1">args</span>) <span class="pl-k">throws</span> <span class="pl-smi">Exception</span> {
+      	<span class="pl-c">// 通过 Spring 上下文容器，获取所有 CreateOrderChainContext Bean</span>
+        <span class="pl-smi">Map</span>&lt;<span class="pl-smi">String</span>, <span class="pl-smi">OrderCreateChainHandler</span>&gt; <span class="pl-s1">chainFilterMap</span> = <span class="pl-smi">ApplicationContextHolder</span>.<span class="pl-en">getBeansOfType</span>(<span class="pl-smi">OrderCreateChainHandler</span>.<span class="pl-k">class</span>);
+      	<span class="pl-c">// 将对应 Bean 放入责任链上下文容器中</span>
+        <span class="pl-s1">chainFilterMap</span>.<span class="pl-en">forEach</span>((<span class="pl-s1">beanName</span>, <span class="pl-s1">bean</span>) -&gt; <span class="pl-s1">orderCreateChainHandlerContainer</span>.<span class="pl-en">add</span>(<span class="pl-s1">bean</span>););
+    }
+}
+实现 <span class="pl-smi">OrderCreateChainHandler</span> 接口作为责任链处理器，每个具体的实现类负责执行特定的逻辑。
+
+<span class="pl-c">// 订单创建参数必填检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamNotNullChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数正确性检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamVerificationChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建商品 SKU 库存验证</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateProductSkuStockChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">2</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数必填检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamNotNullChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数正确性检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamVerificationChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建商品 SKU 库存验证</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateProductSkuStockChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">2</span>;
+    }
+}
+通过责任链模式优化，创建订单接口前置校验代码从上千行缩减为<span class="pl-smi">一</span>行。
+
+<span class="pl-c1">@</span><span class="pl-c1">RequiredArgsConstructor</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">OrderServiceImpl</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderService</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">OrderCreateChainContext</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-s1">orderCreateChainContext</span>;
+  
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">createOrder</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 责任链模式: 执行订单创建参数验证</span>
+        <span class="pl-s1">orderCreateChainContext</span>.<span class="pl-en">handler</span>(<span class="pl-s1">requestParam</span>);
+    }
+}
+
+<span class="pl-c1">@</span><span class="pl-c1">RequiredArgsConstructor</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">OrderServiceImpl</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderService</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">OrderCreateChainContext</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-s1">orderCreateChainContext</span>;
+  
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">createOrder</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 责任链模式: 执行订单创建参数验证</span>
+        <span class="pl-s1">orderCreateChainContext</span>.<span class="pl-en">handler</span>(<span class="pl-s1">requestParam</span>);
+    }
+}</pre></div>
+<p>经过责任链模式的重构，你是否发现业务逻辑变得更加清晰易懂了？采用这种设计模式后，增加或删除相关的业务逻辑变得非常方便，不再需要担心更改上千行代码的几行代码，导致整个业务逻辑受到影响的情况。</p>
+<h2>责任链抽象</h2>
+<p>可能细心的小伙伴会发现一个问题，当业务使用越来越多的情况下，重复定义 OrderCreateChainHandler 以及 OrderCreateChainContext 会增加系统冗余代码量。</p>
+<p>可以考虑将这两个基础类抽象出来，作为基础组件库中的通用组件，供所有系统下的业务使用，从而避免代码冗余。</p>
+<p>如果想了解如何实现这一操作，请跟随马哥的思路继续往下阅读。</p>
+<h3>1. 抽象基础类</h3>
+<p>定义抽象责任链处理接口，等同于 OrderCreateChainHandler。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">AbstractChainHandler</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">Ordered</span> {
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 执行责任链逻辑</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 责任链执行入参</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>);
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * @return 责任链组件标识</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">String</span> <span class="pl-en">mark</span>();
+}
+
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">AbstractChainHandler</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">Ordered</span> {
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 执行责任链逻辑</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 责任链执行入参</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>);
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * @return 责任链组件标识</span>
+<span class="pl-c">     */</span>
+    <span class="pl-smi">String</span> <span class="pl-en">mark</span>();
+}</pre></div>
+<p>mark 方法是做什么的？接口增加 mark 方法，以便不同业务使用不同的标识。</p>
+<p>假设项目中有两个业务场景：订单下单和用户创建都需要责任链模式去验证，那么在业务中进行调用责任链时传递不同的 mark 方法参数即可。</p>
+<p>定义抽象责任链上下文，等同于 OrderCreateChainContext。可以看到保存责任链处理类的容器从 List 改为了 Map，这样可以方便扩展更多的不同业务责任链子类。</p>
+<p>假设项目中有两个业务场景：订单下单和用户创建都需要责任链模式去验证，mark 就是用来进行分组，在业务中进行调用责任链时传递不同的 mark 方法参数，通过该参数找到对应的一组责任链具体实现类集合。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">AbstractChainContext</span>&lt;<span class="pl-smi">T</span>&gt; <span class="pl-k">implements</span> <span class="pl-smi">CommandLineRunner</span> {
+    
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">Map</span>&lt;<span class="pl-smi">String</span>, <span class="pl-smi">List</span>&lt;<span class="pl-smi">AbstractChainHandler</span>&gt;&gt; <span class="pl-s1">abstractChainHandlerContainer</span> = <span class="pl-smi">Maps</span>.<span class="pl-en">newHashMap</span>();
+    
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * 责任链组件执行</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * @param requestParam 请求参数</span>
+<span class="pl-c">     */</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">String</span> <span class="pl-s1">mark</span>, <span class="pl-smi">T</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-s1">abstractChainHandlerContainer</span>.<span class="pl-en">get</span>(<span class="pl-s1">mark</span>).<span class="pl-en">stream</span>()
+                .<span class="pl-en">sorted</span>(<span class="pl-smi">Comparator</span>.<span class="pl-en">comparing</span>(<span class="pl-smi">Ordered</span>::<span class="pl-s1">getOrder</span>)).<span class="pl-en">forEach</span>(<span class="pl-s1">each</span> -&gt; <span class="pl-s1">each</span>.<span class="pl-en">handler</span>(<span class="pl-s1">requestParam</span>));
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">run</span>(<span class="pl-smi">String</span>... <span class="pl-s1">args</span>) <span class="pl-k">throws</span> <span class="pl-smi">Exception</span> {
+        <span class="pl-c">// 获取 Spring IOC 容器中所有 AbstractChainHandler 接口实现</span>
+        <span class="pl-smi">Map</span>&lt;<span class="pl-smi">String</span>, <span class="pl-smi">AbstractChainHandler</span>&gt; <span class="pl-s1">chainFilterMap</span> = <span class="pl-smi">ApplicationContextHolder</span>.<span class="pl-en">getBeansOfType</span>(<span class="pl-smi">AbstractChainHandler</span>.<span class="pl-k">class</span>);
+        <span class="pl-s1">chainFilterMap</span>.<span class="pl-en">forEach</span>((<span class="pl-s1">beanName</span>, <span class="pl-s1">bean</span>) -&gt; {
+            <span class="pl-smi">List</span>&lt;<span class="pl-smi">AbstractChainHandler</span>&gt; <span class="pl-s1">abstractChainHandlers</span> = <span class="pl-s1">abstractChainHandlerContainer</span>.<span class="pl-en">get</span>(<span class="pl-s1">bean</span>.<span class="pl-en">mark</span>());
+            <span class="pl-k">if</span> (<span class="pl-s1">abstractChainHandlers</span> == <span class="pl-c1">null</span>) {
+                <span class="pl-s1">abstractChainHandlers</span> = <span class="pl-k">new</span> <span class="pl-smi">ArrayList</span>();
+            }
+            <span class="pl-s1">abstractChainHandlers</span>.<span class="pl-en">add</span>(<span class="pl-s1">bean</span>);
+            <span class="pl-c">// 根据 mark 标识将责任链模式分类，放入责任链容器上下文中</span>
+            <span class="pl-s1">abstractChainHandlerContainer</span>.<span class="pl-en">put</span>(<span class="pl-s1">bean</span>.<span class="pl-en">mark</span>(), <span class="pl-s1">abstractChainHandlers</span>);
+        });
+    }
+}</pre></div>
+<p>这两个接口已经被放置在基础组件库中，如果业务需要使用责任链模式，则无需重新定义。</p>
+<p>现在，让我们来看看业务代码需要编写哪些逻辑。</p>
+<h3>2. 抽象业务接口</h3>
+<p>让我们先进行头脑风暴，思考一下这个接口的用途是什么？</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c">// 订单创建责任链过滤器</span>
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">T</span> <span class="pl-k">extends</span> <span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">AbstractChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">default</span> <span class="pl-smi">String</span> <span class="pl-en">mark</span>() {
+        <span class="pl-k">return</span> <span class="pl-smi">OrderChainMarkEnum</span>.<span class="pl-c1">ORDER_CREATE_FILTER</span>.<span class="pl-en">name</span>();
+    }
+}
+
+<span class="pl-c">// 订单创建责任链过滤器</span>
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">T</span> <span class="pl-k">extends</span> <span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-k">extends</span> <span class="pl-smi">AbstractChainHandler</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">default</span> <span class="pl-smi">String</span> <span class="pl-en">mark</span>() {
+        <span class="pl-k">return</span> <span class="pl-smi">OrderChainMarkEnum</span>.<span class="pl-c1">ORDER_CREATE_FILTER</span>.<span class="pl-en">name</span>();
+    }
+}</pre></div>
+<p>首先，如果没有 OrderCreateChainFilter 接口，会是什么样的场景？</p>
+<p>由于责任链处理子类都需要依赖顶级抽象接口，因此要想知道某个业务场景下有多少具体子类是相当困难的。<br>
+由于责任链处理子类都需要实现 Mark 方法，实际上某一类责任链子类的 Mark 方法返回值是相同的。<br>
+通过在业务层面上抽象出一个具体业务责任链接口，就能很好地解决上述两个问题。</p>
+<p>现在，让我们继续探讨责任链子类的编写。实际上，改动并不多，只需要将之前的 OrderCreateChainHandler 实现接口改为 OrderCreateChainFilter 即可。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c">// 订单创建参数必填检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamNotNullChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数正确性检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamVerificationChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建商品 SKU 库存验证</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateProductSkuStockChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">2</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数必填检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamNotNullChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建参数正确性检验</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateParamVerificationChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    }
+}
+
+<span class="pl-c">// 订单创建商品 SKU 库存验证</span>
+<span class="pl-c1">@</span><span class="pl-c1">Component</span>
+<span class="pl-k">public</span> <span class="pl-k">final</span> <span class="pl-k">class</span> <span class="pl-smi">OrderCreateProductSkuStockChainHandler</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderCreateChainFilter</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; {
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+				<span class="pl-c">// 逻辑执行</span>
+    }
+    
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">int</span> <span class="pl-en">getOrder</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">2</span>;
+    }
+}</pre></div>
+<h3>3. 业务使用</h3>
+<p>在具体业务场景中使用时，与之前相比并没有太大的差别。除了增加了 Mark 标识外，没有进行其他变更。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">@</span><span class="pl-c1">RequiredArgsConstructor</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">OrderServiceImpl</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderService</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">AbstractChainContext</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-s1">abstractChainContext</span>;
+  
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">createOrder</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 责任链模式: 执行订单创建参数验证</span>
+        <span class="pl-s1">abstractChainContext</span>.<span class="pl-en">handler</span>(<span class="pl-smi">OrderChainMarkEnum</span>.<span class="pl-c1">ORDER_CREATE_FILTER</span>.<span class="pl-en">name</span>(), <span class="pl-s1">requestParam</span>);
+    }
+}
+
+<span class="pl-c1">@</span><span class="pl-c1">RequiredArgsConstructor</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">OrderServiceImpl</span> <span class="pl-k">implements</span> <span class="pl-smi">OrderService</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">AbstractChainContext</span>&lt;<span class="pl-smi">OrderCreateCommand</span>&gt; <span class="pl-s1">abstractChainContext</span>;
+  
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">createOrder</span>(<span class="pl-smi">OrderCreateCommand</span> <span class="pl-s1">requestParam</span>) {
+        <span class="pl-c">// 责任链模式: 执行订单创建参数验证</span>
+        <span class="pl-s1">abstractChainContext</span>.<span class="pl-en">handler</span>(<span class="pl-smi">OrderChainMarkEnum</span>.<span class="pl-c1">ORDER_CREATE_FILTER</span>.<span class="pl-en">name</span>(), <span class="pl-s1">requestParam</span>);
+    }
+}</pre></div>
+<h2>文末总结</h2>
+<p>本文详细介绍了责任链模式的概念，并通过电商下单场景模拟了真实使用场景。</p>
+<p>为了复用责任链接口定义和上下文，我们通过抽象的方式将责任链门面接口加入到基础组件库中，实现快速接入责任链的目的。</p>
+<p>虽然在本文中，我们没有使用 boolean 类型的返回值，而是通过异常来终止流程，但在后续的增强中，我们可以考虑添加布尔类型的返回值。</p>
+<p>此外，我们还可以在 AbstractChainHandler 中增加是否异步执行的方法，以提高方法执行性能和减少接口响应时间。</p>
+<p>架构设计总是在不断演进，本文的设计也有优化和进步的空间，让我们继续探索责任链模式的更多可能性。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+</div>
+    <div id="footer">Copyright © <span id="year"></span><a href="https://Phoenix-Wong.github.io/blog"> FicOo </a>
+<p>
+<span id="runday"></span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a>
+</p>
+
+<script>
+if(""!=""){
+    var now=new Date();
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("year").innerHTML=now.getFullYear();
+    if(""!=""){document.getElementById("runday").innerHTML=" • "+"网站运行"+diffDay+"天"+" • ";}
+    else{document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";}
+}
+</script>
+</div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","Phoenix-Wong/blog");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+</script>
+
+
+</html>
