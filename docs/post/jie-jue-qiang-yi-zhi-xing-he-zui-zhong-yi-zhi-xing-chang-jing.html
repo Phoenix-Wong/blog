@@ -4,7 +4,7 @@
     <meta content="text/html; charset=utf-8" http-equiv="content-type" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
@@ -79,8 +79,10 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 比如支付成功后通知发货系统发货，确认收货后通知积分系统发放积分，只要保证能够通知成功即可，不需要同时成功同时失败。 对于最终一致性场景，我们采用的是本地消息表方案：在本地事务中将要执行的异步操作记录在消息表中，如果执行失败，可以通过定时任务来补偿。<br>
 <a target="_blank" rel="noopener noreferrer" href="https://github.com/Phoenix-Wong/FicOo.github.io/assets/16167855/dfad2fdf-5e8d-43da-8912-00ceb81ddfd9"><img src="https://github.com/Phoenix-Wong/FicOo.github.io/assets/16167855/dfad2fdf-5e8d-43da-8912-00ceb81ddfd9" alt="Pasted image 20230413182939" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
+
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>
+
 </div>
     <div id="footer">Copyright © <span id="year"></span><a href="https://Phoenix-Wong.github.io/blog"> FicOo </a>
 <p>
@@ -135,6 +137,8 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5p
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
 
 function openComments(){
     cm=document.getElementById("comments");
